@@ -3,6 +3,10 @@
 version = 3
 
 [[package]]
+name = "bank"
+version = "0.1.0"
+
+[[package]]
 name = "calculator"
 version = "0.1.0"
 
