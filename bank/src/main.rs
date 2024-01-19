@@ -11,16 +11,21 @@ fn main() {
         balance: 10.0,
     };
 
-    account1.deposit(10.0);
-    account2.withdraw(10.0).unwrap();
+    match account1.deposit(10.0) {
+        Ok(_) => println!("Account1 balance: {}", account1.balance()),
+        Err(error) => panic!("{}", error),
+    }
 
-    println!("Account1 balance: {}", account1.balance());
-    println!("Account2 balance: {}", account2.balance());
+    match account2.withdraw(10.0) {
+        Ok(_) => println!("Account2 balance: {}", account2.balance()),
+        Err(error) => panic!("{}", error),
+    }
+
 }
 
 trait Account {
-    fn deposit(&mut self, amount: f64);
-    fn withdraw(&mut self, amount: f64) -> Result<(), &str>;
+    fn deposit(&mut self, amount: f64) -> Result<(), String>;
+    fn withdraw(&mut self, amount: f64) -> Result<(), String>;
     fn balance(&self) -> f64;
 }
 #[allow(dead_code)]
@@ -31,13 +36,17 @@ struct BankAccount {
 }
 
 impl Account for BankAccount {
-    fn deposit(&mut self, amount: f64) {
+    fn deposit(&mut self, amount: f64) -> Result<(), String> {
+        if self.balance + amount < self.balance {
+            return Err("Balance overflow".to_string())
+        }
         self.balance += amount;
+        Ok(())
     }
 
-    fn withdraw(&mut self, amount: f64) -> Result<(), &str> {
+    fn withdraw(&mut self, amount: f64) -> Result<(), String> {
         if self.balance < amount {
-            return Err("Not enough balance");
+            return Err("Not enough balance".to_string());
         }
         self.balance -= amount;
         Ok(())
